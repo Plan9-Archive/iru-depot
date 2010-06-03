@@ -1,0 +1,23 @@
+#!/bin/rc
+# note-based 'coroutine' in rc(1)
+
+fn sigalrm{
+	echo alarmed
+}
+
+pid=`{grep $0 /proc/*/args | sed 's!:.*$!!g; s!/proc/(.*)/args!\1!g' | sed 1!d}
+
+{ 
+	while(){
+		sleep 2
+		echo alarm >/proc/$pid/note
+	}
+} &
+
+
+while(){
+	sleep 1;
+	echo -n .
+}
+
+

@@ -1,0 +1,47 @@
+#!/bin/rc
+
+if(~ $#* 0){
+	echo usage: cdfpart cd
+	exit usage
+}
+
+cddata=$1/data
+torito=`{dd -if $cddata -iseek `{echo '17*2048' | hoc} -bs 1 -count 32 >[2]/dev/null}
+
+if(~ $torito 'CD001EL TORITO SPECIFICATION'){
+	begin=`{dd -if $cddata -iseek 17 -bs 2048 -count 1 >[2]/dev/null |\
+			xd -1d | awk '{$1=""; printf("%s", $0)}' |\
+			awk '{printf("%d\n", $72 + $73*256 + $74*65536 + $75*16777216)}'}
+
+	buf=(`{dd -if $cddata -iseek $begin -bs 2048 -count 1 >[2]/dev/null |\
+			xd -1d | awk '{$1=""; printf("%s", $0)}'})
+
+	# check floppy signatures
+	sign0=($buf(1) $buf(2) $buf(3) $buf(4))
+	sign1=($buf(31) $buf(32))
+
+	if(~ $sign0 '001 000 000 000')
+	if(~ $sign1 '085 170')  # 0x55 0xAA
+	if(~ $buf(33) 136){     # 0x88
+		begin=`{echo $buf(41) + $buf(42)'*'256 + $buf(43)'*'65536 + $buf(44)'*'16777216 | hoc}
+
+		# floppy emulation type
+		switch($buf(34)){
+		case 001
+			n=1200
+		case 002
+			n=1440
+		case 003
+			n=2880
+		case *:
+			n=0
+		}
+		
+		# convert to 2048-byte blocks
+		n=`{echo $n'*'1024 / 2048 | hoc}
+
+		# add partition
+		if(! ~ $n 0)
+			echo part cdboot $begin `{echo $begin+$n | hoc} >$1/ctl
+	}
+}
