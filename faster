@@ -1,0 +1,17 @@
+#!/bin/sh
+# Iruata Souza/2008
+# Public Domain
+
+[[ -z $2 ]] && nping=3 || nping=$2
+i=0
+avg=""
+
+for host in `cat $1`; do
+	d=`ping -c $nping $host | sed "2,$((nping+1))!d" | awk '{print $7}' | awk -F= '{print $2}'`
+	div=`echo $d | awk '{print NF}'`
+	#avg[$i]="`echo "(/ (+ $d) $div)" | clisp -q | sed 1d` $host" 
+	avg[$i]="`echo "$d / $div" | bc` $host"
+	i=$((i+1))	
+done
+i=$((i-1))
+(while [ $i -ge 0 ]; do echo ${avg[$i]}; i=$((i-1)); done) | sort -n

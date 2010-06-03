@@ -1,0 +1,17 @@
+# public domain
+# Iruata Souza
+
+CC=cc
+CFLAGS=-Wall
+LDFLAGS=-lm
+
+%.pdf:%.tex
+	pdflatex $*.tex
+
+%.ps:%.tex
+	latex $*.tex
+	dvips -o $*.ps $*.dvi
+	rm $*.dvi
+
+%:%.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $@.c

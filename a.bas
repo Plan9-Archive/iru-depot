@@ -1,0 +1,80 @@
+found on a notebook (the paper kind) from 1998 I guess
+
+First Page
+----------
+Declare Sub Menu()
+Declare Sub Help()
+Declare Sub Som()
+Declare Sub First()
+Declare Sub End()
+
+Second Page
+-----------
+CLS	
+TIMER:
+X = TIMER
+FOR Y = 1 TO 2
+CONT: IF TIMER - X <= .2 THEN GOTO CONT
+END
+TIMER2:
+X = TIMER
+NEXT Y
+END
+
+CALL TIMER
+LOCATE 1,1
+PRINT "MENU"
+LOCATE 3,1
+? "START"
+LOCATE 5,1
+? "SOUND"
+LOCATE 7,1
+? "SAIR"
+CALL TIMER2
+
+Third Page
+----------
+CALL TIMER
+LOCATE 1,5
+? "MENU"
+LOCATE 3,6
+? "START"
+LOCATE 5,6
+? "SOUND"
+LOCATE 7,5
+? "SAIR"
+CALL TIMER2
+CALL TIMER
+LOCATE 1,13
+? "MENU"
+LOCATE 3,16
+? "START"
+LOCATE 5,16
+? "SOUND"
+LOCATE 7,13
+? "SAIR"
+CALL TIMER2
+
+Fourth Page
+-----------
+CALL TIMER
+LOCATE 1,28
+? "MENU"
+LOCATE 3,31
+? "START"
+LOCATE 5,31 
+? "SOUND"
+LOCATE 7,28
+? "SAIR"
+CALL TIMER2
+CALL TIMER
+LOCATE 1,35
+? "MENU"
+LOCATE 3,35
+? "START"
+LOCATE 5,35 
+? "SOUND"
+LOCATE 7,35
+? "SAIR"
+CALL TIMER2
+
