@@ -1,4 +1,4 @@
-;;; calculates pi by euler expantion
+;;; calculates pi by euler expansion
 (define (pi-4 n end) 
   (if (> n end) 
       0 
