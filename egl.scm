@@ -28,7 +28,7 @@
       (let* ((fn exp)
              (point (lambda (x) (cons x (fn x)))))
         (let loop ((lst (map point (range from to step))))
-          (unless (eq? lst '())
+          (unless (null? lst)
             (gl:Vertex2f 
               (+ (- startx 0.5)  (* *p-scale* (caar lst))) 
               (+ starty (* *p-scale* (cdar lst))))
@@ -36,7 +36,7 @@
       (let* ((fn (lambda (x) (exp (- x))))
              (point (lambda (x) (cons x (fn x)))))
         (let loop ((lst (map point (range from to step))))
-          (unless (eq? lst '())
+          (unless (null? lst)
             (gl:Vertex2f 
               (+ (+ startx 0.5)  (* *p-scale* (caar lst))) 
               (+ starty (* *p-scale* (cdar lst))))

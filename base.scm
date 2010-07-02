@@ -18,7 +18,7 @@
 
 ; accumulate the application of f to the elements of the list l
 (define (reduce f init l)
-  (if (null '())
+  (if (null? l)
       init
       (f (car l) (reduce f init (cdr l)))))
 
