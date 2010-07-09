@@ -1,4 +1,7 @@
 syntax:glob
+*.8
+8.out
+a.out
 *.o
 test/*
 syntax: regexp
