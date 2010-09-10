@@ -1,12 +1,16 @@
-;;; ODE integration by Euler method
+;;; ODE integration by Euler forward method
 
-(define (euler f y0 h max)
-  (let loop ((lasty y0)
-             (x 0))
-    (unless (> x max)
-      (printf "~a ~a~%" x lasty)
-      (loop (+ lasty (* h (f x lasty))) (+ x h)))))
+(define (euler f y0 h x-max)
+  (let loop ((values '())
+             (x 0)
+             (yi y0))
+    (if (> x x-max)
+        (reverse values)
+        (let ((yi+1 (+ yi (* h (f x)))))
+          (loop
+            (cons (list x yi) values)
+            (+ x h)
+            yi+1)))))
 
-(define (dy x y) (+ (* y y) 1))
-(euler dy 0 (read) 1)
+
 
