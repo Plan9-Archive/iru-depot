@@ -1,8 +1,17 @@
 ;;; sieve of eratosthenes
-;;; todo: tail-recursion
+
+(define (range from to . rest)
+  (use srfi-1)
+  (let ((step (if (null? rest) 1 (car rest))))
+    (iota (round (/ (+ (- to from) step) step)) from step)))
+          
 (define (primes n)
-  (let loop ((lst (range 2 n 1)))
-    (if (null? lst)
-        '()
-        (let ((p (car lst)))
-          (cons p (loop (filter (lambda (x) (> (modulo x p) 0)) lst)))))))
+  (let loop ((totest (range 2 n))
+             (filtered '()))
+    (if (null? totest)
+        (reverse filtered)
+        (let ((p (car totest)))
+          ;(printf "filtered ~a to test ~a ~%" filtered totest)
+          (loop 
+            (filter (lambda (x) (> (modulo x p) 0)) totest)
+            (cons p filtered))))))
