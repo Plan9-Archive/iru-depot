@@ -15,11 +15,12 @@ struct Aux
 	int ndir;
 };
 
+int ctlfd;
 
 void
 usage(void)
 {
-	fprint(2, "usage: passfs [-D] mtpt\n");
+	fprint(2, "usage: passfs [-D] [-s service] [-l listener] mtpt\n");
 	exits("usage");
 }
 
@@ -141,6 +142,7 @@ fsopen(Req *r)
 	}
 	aux->fd = fd;
 	respond(r, nil);
+	fprint(ctlfd, "open name:%s\n", aux->name);
 }
 
 static int
@@ -263,12 +265,21 @@ Srv fs = {
 void
 main(int argc, char *argv[])
 {
-	char *mtpt;
-	int p[2];
+	char *mtpt, *svc, *ctl, buf[64];
+	int p[2], cp[2];
+
+	svc = nil;
+	ctl = nil;
 
 	ARGBEGIN{
 	case 'D':
 		chatty9p++;
+		break;
+	case 's':
+		svc = EARGF(usage());
+		break;
+	case 'l':
+		ctl = EARGF(usage());
 		break;
 	default:
 		usage();
@@ -284,6 +295,23 @@ main(int argc, char *argv[])
 	fs.infd = p[1];
 	fs.outfd = p[1];
 	fs.srvfd = p[0];
+
+	if(ctl){
+		snprint(buf, sizeof buf, "/srv/%s", ctl);
+		if(pipe(cp) < 0)
+			sysfatal("pipe failed %r");
+
+		ctlfd = create(buf, OWRITE|ORCLOSE, DMEXCL|0600);
+		if(ctlfd < 0)
+			sysfatal("could not post control file %s, %r", ctl);
+		fprint(ctlfd, "%d", cp[0]);
+		close(cp[0]);
+		ctlfd = cp[1];
+	}
+
+	if(svc)
+		if(postfd(svc, fs.srvfd) < 0)
+			sysfatal("could not post service %s, %r", svc);
 	
 	switch(rfork(RFFDG|RFPROC|RFNAMEG|RFNOTEG)){
 	case -1:
