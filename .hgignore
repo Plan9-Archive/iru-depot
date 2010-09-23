@@ -1,6 +1,6 @@
 syntax:glob
 *.8
-8.out
+8.*
 a.out
 *.o
 test/*
