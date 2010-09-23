@@ -18,7 +18,7 @@
           (set! (cdr last) (list (+ (car last) 1)))
           (loop (+ a 1) (cdr last)))))))
 
-; Bases on SRFI-1's iota
+; Based on SRFI-1's iota
 (define (range a b)
   (let loop ((a a) (l '()))
     (if (= a b)
