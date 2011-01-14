@@ -10,7 +10,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		os.Stderr.WriteString("usage: primes n\n")
+		fmt.Fprintf(os.Stderr, "usage: primes n\n")
 		os.Exit(1)
 	}
 	
