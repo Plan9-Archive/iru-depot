@@ -1,11 +1,23 @@
-(define (file-filter filename filter)
-  (call-with-input-file filename
-    (lambda (file)
-      (let readloop ((line (read-line file)))
-        (if (not (eof-object? line))
-           (begin
-             (filter line)
-             (readloop (read-line file))))))))
+(define (port-filter filter port)
+  (let loop ((line (read-line port)))
+    (unless (eof-object? line)
+      (begin
+        (filter line)
+        (loop (read-line port))))))
 
-(define (cat filename)
-  (file-filter filename (lambda (line) (display (format "~A~%" line)))))
+(define (acc-filter filter port)
+  (let loop ((line (read-line port))
+             (accs ""))
+    (if (not (eof-object? line))
+      (begin
+        (let ((s (filter line)))
+          (loop (read-line port) (string-append accs s))))
+      accs)))
+
+(define (cat file)
+  (port-filter (lambda (line) (print line))
+               (if (null? file)
+                   (current-input-port) 
+                   (open-input-file file))))
+
+(cat (command-line-arguments))
