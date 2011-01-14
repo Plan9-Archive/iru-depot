@@ -29,8 +29,15 @@
   (not (even? x)))
   
 ; build a list of sequential integers from a to b
-; todo: add a step, generalize to numbers, make it tail-recursive
+; todo: add a step, generalize to numbers
 (define (range a b)
-  (if (eq? a b)
-      (cons a '())
-      (cons a (range (+ a 1) b))))
+  (let loop ((a a) (l (list)))
+    (if (> a b)
+        (reverse l)
+        (loop (+ a 1) (cons a l)))))
+
+(define (range2 a b)
+  (let loop ((b b) (l (list)))
+    (if (< b a)
+        l
+        (loop (- b 1) (cons b l)))))
