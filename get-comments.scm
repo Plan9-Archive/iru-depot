@@ -1,9 +1,6 @@
-#!/bin/sh
-#|
-exec mzscheme -qr "$0" ${1+"$@"}
-|#
+#!/usr/local/bin/csi -s
 
-(define (get-sh-comment file)
+(define (sh-comment file)
   (call-with-input-file file
     (lambda (file)
       (let readloop ((line (read-line file))
@@ -16,7 +13,7 @@ exec mzscheme -qr "$0" ${1+"$@"}
                                          "")))
             comment)))))
 
-(define (get-scheme-comment file)
+(define (scm-comment file)
   (call-with-input-file file
     (lambda (file)
       (let readloop ((line (read-line file))
@@ -26,7 +23,7 @@ exec mzscheme -qr "$0" ${1+"$@"}
                       (string-append comment (string-append line "\n")))
             comment)))))
 
-(define (get-C-comment-block file)
+(define (c-comment file)
   (call-with-input-file file
     (lambda (file)
       (define raw "")

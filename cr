@@ -1,4 +1,4 @@
-#!/usr/local/bin/csi -script
+#!/usr/local/bin/csi -s
 ;;; calculates UFRJ cr
 
 (define (weights lst)
