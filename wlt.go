@@ -39,7 +39,7 @@ func readurl(url string) (os.Error, string) {
 }
 
 type ISO639 struct {
-	Code string
+	Code  string
 	Names []string
 }
 
@@ -47,10 +47,10 @@ func line2iso(line string) ISO639 {
 	if line == "" {
 		return ISO639{"", nil}
 	}
-	
+
 	s := strings.Split(line, "\t", -1)
 	names := strings.Split(s[1], ";", -1)
-	for i, name := range(names) {
+	for i, name := range names {
 		names[i] = strings.TrimSpace(name)
 	}
 	return ISO639{s[0], names}
@@ -64,7 +64,7 @@ func url2isotab(url string) (os.Error, []ISO639) {
 	stab := strings.Split(s, "\n", -1)
 	tab := make([]ISO639, len(stab))
 
-	for i, s := range(stab) {
+	for i, s := range stab {
 		if s == "" {
 			continue
 		}
@@ -74,7 +74,7 @@ func url2isotab(url string) (os.Error, []ISO639) {
 }
 
 func code2names(isotab []ISO639, code string) []string {
-	for _, iso := range(isotab) {
+	for _, iso := range isotab {
 		if iso.Code == code {
 			return iso.Names
 		}
@@ -83,8 +83,8 @@ func code2names(isotab []ISO639, code string) []string {
 }
 
 func name2code(isotab []ISO639, name string) string {
-	for _, iso := range(isotab) {
-		for _, s := range(iso.Names) {
+	for _, iso := range isotab {
+		for _, s := range iso.Names {
 			if s == name {
 				return iso.Code
 			}
@@ -94,22 +94,22 @@ func name2code(isotab []ISO639, name string) string {
 }
 
 func main() {
-	if len(flag.Args()) < 1 {
+	if flag.NArg() == 0 {
 		fmt.Fprintf(os.Stderr, "usage: wlt word\n")
 		os.Exit(1)
 	}
-	
+
 	err, tab := url2isotab("iso639-1.pt")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error in ISO639-1 table, %s\n", err)
 		os.Exit(1)
 	}
-	
+
 	word := flag.Arg(0)
 	notrans := "We are not yet able to translate"
 
-	for _, iso := range(tab) {
-		if iso.Code == "pt" || iso.Names == nil{
+	for _, iso := range tab {
+		if iso.Code == "pt" || iso.Names == nil {
 			continue
 		}
 
@@ -120,13 +120,12 @@ func main() {
 			os.Exit(1)
 		}
 
-		s = s[4:]	// skip [[["
+		s = s[4:] // skip [[["
 		if s[:len(notrans)] == notrans {
 			continue
 		}
-		
+
 		end := strings.Index(s, "\"")
 		fmt.Printf("%s: %s\n", iso.Names[0], s[:end])
 	}
 }
-
