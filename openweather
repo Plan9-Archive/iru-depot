@@ -1,0 +1,38 @@
+#!/usr/bin/env rc
+
+baseurl=http://br.weather.com
+tmpf=/tmp/`{9 dd -if /dev/urandom -bs 1 -count 10 >[2]/dev/null | base64 | sed 's!/!_!g'}
+
+fn download {
+	target=`{wget -q -O - --post-data'=where='$1'&what=' $baseurl/search/search |\
+				grep '<iframe' | 9 sed 's/.*src=\"(.*)\" .*/\1/' | head -1}
+	wget -q -O - $baseurl$target > $tmpf
+}
+
+fn lastinfo {
+	# get starting line of the least available day
+	start=`{grep -n 'day=10' $tmpf | awk -F: '{print $1}'}
+
+	# date is the line after $start
+	dl=`{echo $start + 1 | hoc}
+	date=`{sed $dl'!d' $tmpf | sed 's!.*</A><BR>!!g'}
+
+	# get info
+	info=`{sed $start',$!d' $tmpf |\
+		awk '/<TD CLASS="dataText".*>/, /<\/TD>/' |\
+		9 sed '/<*TD.*/d; /&nbsp/d' |\
+		9 sed 's/&deg;/°/g'}
+
+	echo -n $date
+	echo -n '		'
+	echo $info | 9 sed 's/([0-9]+)/		\1/g'
+}
+echo 'Data		Condição				Máx			Min'
+for(i in $*) {
+	download $i
+	lastinfo
+}
+
+rm $tmpf
+
+
