@@ -1,5 +1,5 @@
 CC=cc
-CFLAGS=-Wall
+CFLAGS+=-Wall
 
 %*:%.c
 	$(CC) $(CFLAGS) -o $@ $@.c
