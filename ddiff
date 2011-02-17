@@ -1,0 +1,33 @@
+#!/usr/local/plan9/bin/rc
+# directory diff
+
+if(! ~ $#* 2) {
+	echo usage: ddiff dir1 dir2
+	exit usage
+}
+
+dir1=`{du -a $1/* | awk '{print $2}' | 9 sed 's!'^$1'/+!!'}
+dir2=`{du -a $2/* | awk '{print $2}' | 9 sed 's!'^$2'/+!!'}
+
+eqfiles=(`{echo $dir1 $dir2 | sed 's/ /\n/g' | sort | uniq -d})
+
+for(f in $eqfiles) {
+	# diff does not handle directories
+	if(! test -d $f) {
+		cmp $1/$f $2/$f >/dev/null >[2=1]
+		if(~ $status 1) {
+			echo diff $1/$f $2/$f
+		}
+	}
+}
+
+
+ufiles=(`{echo $dir1 $dir2 | sed 's/ /\n/g' | sort | uniq -u})
+
+# ufiles only contains files that belong to only one of the directories
+for(f in $ufiles) {
+	if(~ $f $dir1)
+		echo -$f
+	if not
+		echo +$f
+}
