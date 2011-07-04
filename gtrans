@@ -1,0 +1,5 @@
+#!/bin/rc
+# translate a word using google translate
+
+hget 'http://translate.google.com/translate_a/t?client=t&text='^ $1 ^'&hl=en&tl=pt'  | \
+	9 sed 's/^.*\]\],\[\[\"noun\",\[(.*)\]\],\[\"verb\",\[(.*)\]\]\].*$/substantivo: \1\nverbo: \2/g; s/\",/, /g; s/\"//g'
