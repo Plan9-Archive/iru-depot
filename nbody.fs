@@ -19,7 +19,7 @@ pi pi f* 4e f* fconstant solarmass
 : vz!  5 floats + f! ;
 : m@   6 floats + f@ ;
 : m!   6 floats + f! ;
- 
+
 : f+!  dup f@ f+ f! ;
  
 : #astro  7 floats ;
@@ -34,12 +34,27 @@ fvariable pz 0e f,
 
 : p!  ( adr -- )  dup vx@ dup m@ f* px f+!  dup vy@ dup m@ f* py f+!  dup vz@ m@ f* pz f+! ;
 : .p  px f@ f. py f@ f. pz f@ f. ;
-: offsetp  ( astro -- )  >r  solarmass  fdup px f@ fnegate fswap f/ a.s cr r@ vx!  fdup py f@ fnegate fswap f/  r@ vy!
+: offsetp  ( astro -- )  >r  solarmass  fdup px f@ fnegate fswap f/  r@ vx!  fdup py f@ fnegate fswap f/  r@ vy!
   fdup pz f@ fnegate fswap f/  r> vz! ;
  
 : system  ( astros n -- )  here 2dup !  over cells allot  dup >r cell+ dup  rot cells + swap
-  do dup p! I ! cell +loop r>  dup cell+ @ offsetp ; 
-  
+  do dup p! I ! cell +loop r>  dup cell+ @ offsetp ;
+
+: len  @ ;
+: item  ( adr n -- adr )  1+ cells + @ ;
+
+: sq  fdup f* ;
+: v2  ( adr -- ) dup vx@ sq  dup vy@ sq  vz@ sq  f+ f+ ;
+: dx  ( a1 a2 -- )  x@ x@ f- ;
+: dy  ( a1 a2 -- )  y@ y@ f- ;
+: dz  ( a1 a2 -- )  z@ z@ f- ;
+: ds2  2dup dx sq  2dup dy sq  2dup dz sq  f+ f+ ;
+: ds  ds2 fsqrt ;
+
+\ : energy  ( astro -- )  0.5e dup m@ v2 f* f* ;
+\ : energies  ( sys cur -- )  1+ over len swap do I item dup  
+\ : sysenergy  0e  dup len 0 do  dup I item energy f+  I energies loop ;
+
 astro sun
 astro jupiter
 astro saturn
@@ -82,3 +97,18 @@ sun dup #astro erase  solarmass m!
 
 
 neptune uranus saturn jupiter sun 5 system
+
+
+\ -----
+
+: .hex  ( n -- )  base @ swap  hex . base ! ;
+: float-  float negate + ;
+
+: /sys  ( sys -- n )  @ ;
+: sysastro#  ( sys n -- adr )  1+ cells + @ ;
+: sysastro!  ( adr sys n -- )  1+ cells + ! ;
+: 0sys  ( astron ... astro0 n sys -- )  swap 0 do swap over I sysastro! loop drop ;
+: createsys  ( astron ... astro0 n -- )  create here over dup ,  1+ cells allot 0sys does> ;
+: .sys  ( sys -- )  dup /sys 0 do dup I sysastro# . loop drop ;
+
+: createastro  ( f: x y z vx vy vx mass -- )  create 7 floats allot  here 7 0 do dup f! float- loop does> drop ;
