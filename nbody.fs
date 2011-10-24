@@ -20,34 +20,14 @@ pi pi f* 4e f* fconstant solarmass
 : m!   6 floats + f! ;
 
 
-: f+!  dup f@ f+ f! ;
- 
-fvariable px 0e f,
-fvariable py 0e f,
-fvariable pz 0e f,
-
-: a.s .s f.s cr ;
-
-: p!  ( adr -- )  dup vx@ dup m@ f* px f+!  dup vy@ dup m@ f* py f+!  dup vz@ m@ f* pz f+! ;
-: .p  px f@ f. py f@ f. pz f@ f. ;
-: offsetp  ( astro -- )  >r  solarmass  fdup px f@ fnegate fswap f/  r@ vx!  fdup py f@ fnegate fswap f/  r@ vy!
-  fdup pz f@ fnegate fswap f/  r> vz! ;
- 
-: sq  fdup f* ;
-: v2  ( adr -- ) dup vx@ sq  dup vy@ sq  vz@ sq  f+ f+ ;
-: dx  ( a1 a2 -- )  x@ x@ f- ;
-: dy  ( a1 a2 -- )  y@ y@ f- ;
-: dz  ( a1 a2 -- )  z@ z@ f- ;
-: ds2  2dup dx sq  2dup dy sq  2dup dz sq  f+ f+ ;
-: ds  ds2 fsqrt ;
-
- 
-\ -----
-
 : .hex  ( n -- )  base @ swap  hex . base ! ;
 : float-  float negate + ;
 : f+!  dup f@ f+ f! ;
 
+
+fvariable px 0e f,
+fvariable py 0e f,
+fvariable pz 0e f,
 
 : .p  px f@ f. py f@ f. pz f@ f. ;
 : px+!  ( f: x -- )  px f+! ;
@@ -56,6 +36,7 @@ fvariable pz 0e f,
 : p+!  ( adr -- )  dup m@  dup vx@ fover f* px+!  dup vy@ fover f* py+!  vz@ f* pz+! ;
 : offp  ( adr -- )  px f@ solarmass f/ fnegate  py f@ solarmass f/ fnegate
   pz f@ solarmass f/ fnegate  dup vz! dup vy! vx! ;
+
 
 : createastro  ( f: x y z vx vy vx mass -- )  create 7 floats allot  here float- 7 0 do dup f! float- loop drop does> ;
 : .astro  ( astro -- )  7 0 do dup f@ f. float+ loop drop ;
@@ -66,7 +47,21 @@ fvariable pz 0e f,
 : sysastro!  ( adr sys n -- )  1+ cells + ! ;
 : 0sys  ( astron ... astro0 n sys -- )  swap 0 do 2dup I sysastro! swap p+! ( .p cr ) loop  0 sysastro# offp ;
 : createsys  ( astron ... astro0 n -- )  create here over dup ,  1+ cells allot 0sys does> ;
-: .sys  ( sys -- )  dup /sys 0 do dup I sysastro# dup . .astro cr loop drop ;
+: .sys  ( sys -- )  dup /sys 0 do dup I sysastro# ( dup ) . ( .astro ) cr loop drop ;
+
+
+: sq  fdup f* ;
+: v2  ( adr -- f: vx^2 + vy^2 + vz^2 ) dup vx@ sq  dup vy@ sq  vz@ sq  f+ f+ ;
+: dx  ( a1 a2 -- )  x@ x@ fswap f- ;
+: dy  ( a1 a2 -- )  y@ y@ fswap f- ;
+: dz  ( a1 a2 -- )  z@ z@ fswap f- ;
+: ds2 ( a1 a2 -- )  2dup dx sq  2dup dy sq  dz sq  f+ f+ ;
+: ds  ( a1 a2 -- )  ds2 fsqrt ;
+
+: energy+  ( adr f:energy -- f:energy )  0.5e dup m@ v2 f* f* f+ ;
+: energy-  ( a1 a2 -- f:energy )  2dup m@ m@ f*  ds  f/ f- ;
+: sysenergy  ( sys -- f:energy )  0e dup /sys 0 do dup I sysastro# dup energy+  over /sys I 1+ 
+  2dup = if unloop 2drop 2drop exit then  do 2dup swap I sysastro# energy- loop  drop loop ;
 
 4.84143144246472090e+00 
 -1.16032004402742839e+00
