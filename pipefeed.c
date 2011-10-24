@@ -21,7 +21,6 @@ exits(char *err)
 #include <libc.h>
 
 #define stop 1000
-#define endmain
 #endif
 
 main(int argc, char *argv[])

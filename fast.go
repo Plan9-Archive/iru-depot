@@ -1,6 +1,6 @@
 package main
 
-// todo: how to sync all the goroutines to start together? check was SEAforth or
+// todo: how to sync all the goroutines to start together? check what SEAforth or
 // GreenArrays machines do.
 
 import (

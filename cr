@@ -1,11 +1,11 @@
-#!/usr/local/bin/csi -s
+#!/usr/bin/csi -s
 ;;; calculates UFRJ cr
 
 (define (weights lst)
   (map car (map cdr lst)))
 
 (define (weighted-grades lst)
-  (map (lambda (x) (apply * 1 x)) lst))
+  (map (lambda (x) (* (car x) (cadr x))) lst))
 
 ; calculates the cr (weighted mean) for a semester.
 ; the format for is semester is:

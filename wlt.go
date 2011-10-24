@@ -1,3 +1,4 @@
+// Traslate a word into all languages supported by Google Translate
 package main
 
 import (
@@ -14,14 +15,14 @@ func readurl(url string) (os.Error, string) {
 	var r io.Reader
 	i := strings.Index(url, "://")
 	if i == -1 {
-		f, err := os.Open(url, os.O_RDONLY, 0)
+		f, err := os.Open(url)
 		defer f.Close()
 		if err != nil {
 			return err, ""
 		}
 		r = f
 	} else if url[0:i] == "http" {
-		resp, _, err := http.Get(url)
+		resp, err := http.Get(url)
 		defer resp.Body.Close()
 		if err != nil {
 			return err, ""
@@ -48,8 +49,8 @@ func line2iso(line string) ISO639 {
 		return ISO639{"", nil}
 	}
 
-	s := strings.Split(line, "\t", -1)
-	names := strings.Split(s[1], ";", -1)
+	s := strings.Split(line, "\t")
+	names := strings.Split(s[1], ";")
 	for i, name := range names {
 		names[i] = strings.TrimSpace(name)
 	}
@@ -61,7 +62,7 @@ func url2isotab(url string) (os.Error, []ISO639) {
 	if err != nil {
 		return err, []ISO639{ISO639{"", nil}}
 	}
-	stab := strings.Split(s, "\n", -1)
+	stab := strings.Split(s, "\n")
 	tab := make([]ISO639, len(stab))
 
 	for i, s := range stab {
@@ -94,6 +95,7 @@ func name2code(isotab []ISO639, name string) string {
 }
 
 func main() {
+	flag.Parse()
 	if flag.NArg() == 0 {
 		fmt.Fprintf(os.Stderr, "usage: wlt word\n")
 		os.Exit(1)

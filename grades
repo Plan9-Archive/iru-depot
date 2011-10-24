@@ -1,4 +1,4 @@
-#!/usr/local/bin/csi -s
+#!/usr/bin/csi -s
 ;;; coalesce all semesters in a single one
 ;;; mostly for input to cr
 
@@ -11,7 +11,8 @@
 (define sem5 '((6.3 5) (3.6 4) (5.4 4)))
 (define sem6 '((0 4) (4.1 4)))
 (define sem7 '((8.1 4)))
-(define sem8 '((5 3.8) (1 6.2) (4 5.2) (4 0.8)))
+(define sem8 '((5 3.8) (1 6.2) (4 5.2) (4 0.8) (5 0.5)))
+(define sem9 '((4 7.0) (4 7.4) (5 3) (4 1.6)))
 
 (printf "~a~%" 
   (eval (cons 'append
@@ -19,6 +20,6 @@
                  ; make a list with the strings semN, where N is the semester number
                  (map (lambda (x) 
                         (string-append "sem" (number->string x))) 
-                      (iota 8 1))))))
+                      (iota 9 1))))))
 
                       
