@@ -64,7 +64,7 @@ fvariable pz 0e f,
 : /sys  ( sys -- n )  @ ;
 : sysastro#  ( sys n -- adr )  1+ cells + @ ;
 : sysastro!  ( adr sys n -- )  1+ cells + ! ;
-: 0sys  ( astron ... astro0 n sys -- )  swap 0 do 2dup I sysastro! swap p+! .p cr loop ;
+: 0sys  ( astron ... astro0 n sys -- )  swap 0 do 2dup I sysastro! swap p+! ( .p cr ) loop  0 sysastro# offp ;
 : createsys  ( astron ... astro0 n -- )  create here over dup ,  1+ cells allot 0sys does> ;
 : .sys  ( sys -- )  dup /sys 0 do dup I sysastro# dup . .astro cr loop drop ;
 
