@@ -60,7 +60,7 @@ fvariable pz 0e f,
 
 : energy+  ( adr f:energy -- f:energy )  0.5e dup m@ v2 f* f* f+ ;
 : energy-  ( a1 a2 -- f:energy )  2dup m@ m@ f*  ds  f/ f- ;
-: sysenergy  ( sys -- f:energy )  0e dup /sys 0 do dup I sysastro# dup energy+  over /sys I 1+ 
+: energy  ( sys -- f:energy )  0e dup /sys 0 do dup I sysastro# dup energy+  over /sys I 1+ 
   2dup = if unloop 2drop 2drop exit then  do 2dup swap I sysastro# energy- loop  drop loop ;
 
 : mag  ( astro astro2 f:dt -- f:mag )  2dup ds ds2 f* f/ ;
@@ -78,10 +78,10 @@ fvariable pz 0e f,
 : x+  ( astro f:dt -- )  dup vx@ f*  dup x@ f+ x! ;
 : y+  ( astro f:dt -- )  dup vy@ f*  dup y@ f+ y! ;
 : z+  ( astro f:dt -- )  dup vz@ f*  dup z@ f+ z! ;
-: pos+ ( sys f:dt -- )  dup /sys 0 do dup I sysastro# fdup dup x+  fdup dup y+  fdup z+ loop ;
+: pos+ ( sys f:dt -- )  dup /sys 0 do dup I sysastro# fdup dup x+  fdup dup y+  fdup z+ loop drop ;
 
 : advance  ( sys f:dt -- )  dup /sys 0 do dup I sysastro#  over /sys I 1+ 2dup = if unloop 2drop drop pos+ exit then 
-  do 2dup swap I sysastro#  fdup fdup 2dup advance- advance+ loop drop cr loop ;
+  do 2dup swap I sysastro#  fdup fdup 2dup advance- advance+ loop  drop loop ;
 
 4.84143144246472090e+00 
 -1.16032004402742839e+00
@@ -122,3 +122,6 @@ createastro neptune
 0e 0e 0e 0e 0e 0e solarmass createastro sun
 
 neptune uranus saturn jupiter sun 5 createsys sys
+
+: run  ( n -- )  sys energy f. cr  0 do sys 0.01e advance loop  sys energy f. cr ;
+
