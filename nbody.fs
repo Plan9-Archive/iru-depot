@@ -63,6 +63,15 @@ fvariable pz 0e f,
 : sysenergy  ( sys -- f:energy )  0e dup /sys 0 do dup I sysastro# dup energy+  over /sys I 1+ 
   2dup = if unloop 2drop 2drop exit then  do 2dup swap I sysastro# energy- loop  drop loop ;
 
+: mag  ( astro astro2 f:dt -- f:mag )  2dup ds ds2 f* f/ ;
+: vx-  ( astro astro2 f:mag -- )  2dup dx m@  f* f*  dup vx@  fswap f- vx! ;
+: vy-  ( astro astro2 f:mag -- )  2dup dy m@  f* f*  dup vy@  fswap f- vy! ;
+: vz-  ( astro astro2 f:mag -- )  2dup dz m@  f* f*  dup vz@  fswap f- vz! ;
+: advance- ( astro astro2 f:dt -- )  2dup mag  fdup 2dup vx-  fdup 2dup vy-  vz- ;
+
+: advance  ( sys f:dt -- )  dup /sys 0 do dup I sysastro#  over /sys I 1+ 2dup = if unloop 2drop 2drop exit then 
+  do 2dup swap I sysastro#  fdup advance- loop drop cr loop ;
+
 4.84143144246472090e+00 
 -1.16032004402742839e+00
 -1.03622044471123109e-01
