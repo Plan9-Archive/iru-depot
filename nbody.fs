@@ -47,7 +47,7 @@ fvariable pz 0e f,
 : sysastro!  ( adr sys n -- )  1+ cells + ! ;
 : 0sys  ( astron ... astro0 n sys -- )  swap 0 do 2dup I sysastro! swap p+! ( .p cr ) loop  0 sysastro# offp ;
 : createsys  ( astron ... astro0 n -- )  create here over dup ,  1+ cells allot 0sys does> ;
-: .sys  ( sys -- )  dup /sys 0 do dup I sysastro# ( dup ) . ( .astro ) cr loop drop ;
+: .sys  ( sys -- )  dup /sys 0 do dup I sysastro# dup . .astro cr loop drop ;
 
 
 : sq  fdup f* ;
@@ -64,13 +64,24 @@ fvariable pz 0e f,
   2dup = if unloop 2drop 2drop exit then  do 2dup swap I sysastro# energy- loop  drop loop ;
 
 : mag  ( astro astro2 f:dt -- f:mag )  2dup ds ds2 f* f/ ;
+
 : vx-  ( astro astro2 f:mag -- )  2dup dx m@  f* f*  dup vx@  fswap f- vx! ;
 : vy-  ( astro astro2 f:mag -- )  2dup dy m@  f* f*  dup vy@  fswap f- vy! ;
 : vz-  ( astro astro2 f:mag -- )  2dup dz m@  f* f*  dup vz@  fswap f- vz! ;
 : advance- ( astro astro2 f:dt -- )  2dup mag  fdup 2dup vx-  fdup 2dup vy-  vz- ;
 
-: advance  ( sys f:dt -- )  dup /sys 0 do dup I sysastro#  over /sys I 1+ 2dup = if unloop 2drop 2drop exit then 
-  do 2dup swap I sysastro#  fdup advance- loop drop cr loop ;
+: vx+  ( astro2 astro f:mag -- )  2dup swap dx m@  f* f*  dup vx@  fswap f+ vx! ;
+: vy+  ( astro2 astro f:mag -- )  2dup swap dy m@  f* f*  dup vy@  fswap f+ vy! ;
+: vz+  ( astro2 astro f:mag -- )  2dup swap dz m@  f* f*  dup vz@  fswap f+ vz! ;
+: advance+ ( astro astro2 f:dt -- )  2dup mag  swap   fdup 2dup vx+  fdup 2dup vy+  vz+ ;
+
+: x+  ( astro f:dt -- )  dup vx@ f*  dup x@ f+ x! ;
+: y+  ( astro f:dt -- )  dup vy@ f*  dup y@ f+ y! ;
+: z+  ( astro f:dt -- )  dup vz@ f*  dup z@ f+ z! ;
+: pos+ ( sys f:dt -- )  dup /sys 0 do dup I sysastro# fdup dup x+  fdup dup y+  fdup z+ loop ;
+
+: advance  ( sys f:dt -- )  dup /sys 0 do dup I sysastro#  over /sys I 1+ 2dup = if unloop 2drop drop pos+ exit then 
+  do 2dup swap I sysastro#  fdup fdup 2dup advance- advance+ loop drop cr loop ;
 
 4.84143144246472090e+00 
 -1.16032004402742839e+00
