@@ -78,7 +78,7 @@ fvariable pz 0e f,
 : x+  ( astro f:dt -- )  dup vx@ f*  dup x@ f+ x! ;
 : y+  ( astro f:dt -- )  dup vy@ f*  dup y@ f+ y! ;
 : z+  ( astro f:dt -- )  dup vz@ f*  dup z@ f+ z! ;
-: pos+ ( sys f:dt -- )  dup /sys 0 do dup I sysastro# fdup dup x+  fdup dup y+  fdup z+ loop drop ;
+: pos+ ( sys f:dt -- )  dup /sys 0 do dup I sysastro# fdup dup x+  fdup dup y+  fdup z+ loop fdrop drop ;
 
 : advance  ( sys f:dt -- )  dup /sys 0 do dup I sysastro#  over /sys I 1+ 2dup = if unloop 2drop drop pos+ exit then 
   do 2dup swap I sysastro#  fdup fdup 2dup advance- advance+ loop  drop loop ;
