@@ -33,5 +33,3 @@
 
 \ should print 2 3 4 5  4 5  4 2 3
 : test  format get . get . get . get . space  3 release 2 release 4 release .bl1  space .forreuse ;
-
-
