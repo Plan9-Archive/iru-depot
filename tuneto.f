@@ -53,7 +53,6 @@
 create #buf 0 c, 
 create buf 80 allot
 : get  buf 80 erase  buf 80 accept  #buf c! ;
-
 : readto  >r 0 begin key dup emit  r@ over <> while 
   over buf + 1+ c! 1+ repeat drop r> drop buf c! ;
 
@@ -63,9 +62,7 @@ create buf 80 allot
 create ss ," Ab|--------|-3b-0--12-3-3-|-3--0-------|---------------------------|"
 create stmp 255 allot  stmp 255 erase
 
-
 : digit?  [char] 0 [char] 9 1+ within ;
-
 
 create inaddr 0 ,
 create #in 0 ,
