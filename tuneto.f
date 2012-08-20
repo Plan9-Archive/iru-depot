@@ -37,18 +37,23 @@
 \
 
 
-00 constant C
-01 constant C#
-02 constant D
-03 constant D#
-04 constant E
-05 constant F
-06 constant F#
-07 constant G
-08 constant G#
-09 constant A
-10 constant A#
-11 constant B
+00 constant A
+01 constant A#
+01 constant Bb
+02 constant B
+03 constant C
+04 constant C#
+04 constant Db
+05 constant D
+06 constant D#
+06 constant Eb
+07 constant E
+08 constant F
+09 constant F#
+09 constant Gb
+10 constant G
+10 constant G#
+11 constant Ab
 
 create #buf 0 c, 
 create buf 80 allot
@@ -68,7 +73,8 @@ create inaddr 0 ,
 create #in 0 ,
 create in# 0 ,
 : in?  in# @ #in @ < ;
-: lookb  inaddr @ in# @ + c@ ;
+: ina  inaddr @ in# @ + ;
+: lookb  ina c@ ;
 : in+  1 in# +! ;
 : inb  lookb in+ ;
 
@@ -82,6 +88,14 @@ create out# 0 ,				\ Current index in input string
 create #nn 0 c,
 create nn 0 c, 0 c,
 : >nn  inb nn c! 1 #nn c!  in? lookb digit? and if inb nn 1+ c! 2 #nn c! then ;
+
+
+: tune?  ( c -- f )  dup [char] A >=  swap [char] G <=  and ;
+: #orb?  ( c -- f )  dup [char] # =  swap [char] b = or ;
+
+\ We assume the a n describes a valid word and avoid the check.
+: >word  ( a n -- xt )  dup here dup >r ! 1 allot  here swap dup >r move r> allot  r> find drop ;
+: >tune  ( -- n )  lookb tune? if ina  in+ lookb #orb? if in+ 2 else 1 then  >word execute then ;
 
 create off 0 ,
 : +off  nn #nn c@ number  off @ + ;
