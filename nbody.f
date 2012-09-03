@@ -3,6 +3,7 @@ requires fpmath
 pi pi f* 4e f* fconstant solarmass
 365.24e fconstant #days
 5 constant nb
+0.01e fconstant dt
 
 : f?  f@ f. ;
 
@@ -57,3 +58,12 @@ fvariable pz
 : sun+  px f@ solarmass f/ fnegate 0 vx f!  py f@ solarmass f/ fnegate 0 vy f!  pz f@ solarmass f/ fnegate 0 vz f! ;
 : offp   p+ sun+ ;
 
+: sq  fdup f* ;
+
+: dx  ( j i -- F: dx )  x f@  x f@ f- ;
+: dy  ( j i -- F: dy )  y f@  y f@ f- ;
+: dz  ( j i -- F: dz )  z f@  z f@ f- ;
+: ds  ( j i -- F: ds )  2dup dx sq  2dup dy sq  dz sq f+ f+ fsqrt ;
+
+: enext  ( i F: e1 -- F: e2 )  dup 1+ nb swap cr ?do I mass f@ dup mass f@ f*  I over ds f/ f- loop drop ;
+: energy  ( -- F: e )  0e nb 0 do  0.5e0 I mass f@  I vx f@ sq I vy f@ sq I vz f@ sq f+ f+ f* f*  f+  I enext loop ;
