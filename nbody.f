@@ -1,11 +1,15 @@
 requires fpmath
 
+\ : f+!  ( a F:n )  dup f@ f+ f! ;
+\ : .S   cr .S  5 spaces f.S ;
+
 pi pi f* 4e f* fconstant solarmass
 365.24e fconstant #days
 5 constant nb
 0.01e fconstant dt
 
 : f?  f@ f. ;
+: f-!  ( a F:n )  dup f@ fswap f- f! ;
 
 \ We need the reversed loop because of the reversed order of the numbers to be stored
 : coord:  create here 1- here nb 1- floats + do I f! 1 floats negate +loop  nb floats allot 
@@ -65,5 +69,19 @@ fvariable pz
 : dz  ( j i -- F: dz )  z f@  z f@ f- ;
 : ds  ( j i -- F: ds )  2dup dx sq  2dup dy sq  dz sq f+ f+ fsqrt ;
 
-: enext  ( i F: e1 -- F: e2 )  dup 1+ nb swap cr ?do I mass f@ dup mass f@ f*  I over ds f/ f- loop drop ;
+: enext  ( i F: e1 -- F: e2 )  dup 1+ nb swap ?do I mass f@ dup mass f@ f*  I over ds f/ f- loop drop ;
 : energy  ( -- F: e )  0e nb 0 do  0.5e0 I mass f@  I vx f@ sq I vy f@ sq I vz f@ sq f+ f+ f* f*  f+  I enext loop ;
+
+
+: mag  ( j i -- F: mag )  ds fdup sq f*  dt fswap f/ ;
+: decvx  ( j i -- )  2dup mag over mass f@ f*  2dup dx f*  nip vx f-! ;
+: incvx  ( j i -- )  2dup mag dup mass f@ f*  2dup dx f*  drop vx f+! ;
+: decvy  ( j i -- )  2dup mag over mass f@ f*  2dup dy f*  nip vy f-! ;
+: incvy  ( j i -- )  2dup mag dup mass f@ f*  2dup dy f*  drop vy f+! ;
+: decvz  ( j i -- )  2dup mag over mass f@ f*  2dup dz f*  nip vz f-! ;
+: incvz  ( j i -- )  2dup mag dup mass f@ f*  2dup dz f*  drop vz f+! ;
+: adv  ( i -- F: mag )  dup 1+ nb swap ?do I over decvx I over incvx  I over decvy I over incvy  I over decvz I over incvz loop drop ;
+: step  nb 0 do I vx f@ dt f*  I x f+!  I vy f@ dt f*  I y f+!  I vz f@ dt f*  I z f+! loop ;
+: advance  nb 0 do I adv loop step ;
+
+: run  offp cr energy f.  0 do advance loop  cr energy f. cr ;
