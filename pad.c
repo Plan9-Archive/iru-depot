@@ -7,46 +7,39 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-typedef struct point point;
-typedef struct rect rect;
-struct point {
+typedef struct Point Point;
+typedef struct Rect Rect;
+struct Point {
 	GLfloat x;
 	GLfloat y;
 };
-struct rect {
-	point min; /* top-left */
-	point max; /* bottom right */
-	point v;
-	point drag;
+struct Rect {
+	Point	min;	/* top-left */
+	Point	max;	/* bottom right */
+	Point	v;
+	GLfloat	drag;
 };
 
-rect r, win;
+Rect r0;
+#define factor 0.3;
+float diff = -factor;
 
 void
-drawrect(rect *r)
+printrect(Rect *r)
+{
+	printf("min(%.5f %.5f) max(%.5f %.5f) v(%.5f %.5f) drag %.5f\n", r->min.x, r->min.y, r->max.x, r->max.y, r->v.x, r->v.y, r->drag);
+}
+
+void
+drawrect(Rect *r)
 {
 	glRectf(r->min.x, r->min.y, r->max.x, r->max.y);
 }
 
-void
-addpt(point *p, GLfloat n)
+Point
+addpt(Point *p, Point *q)
 {
-	p->x += n;
-	p->y += n;
-}
-
-void
-addrect(rect *r, GLfloat n)
-{
-	addpt(&r->min, n);
-	addpt(&r->max, n);
-}
-
-void
-init(void)
-{
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glShadeModel(GL_FLAT);
+	return (Point){p->x + q->x, p->y + q->y};
 }
 
 void
@@ -54,55 +47,74 @@ display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(1.0, 1.0, 1.0);
-	drawrect(&r);
+	drawrect(&r0);
 	glutSwapBuffers();
 }
 
 void
 update(void)
 {
-	float diff = 0.2;
+	int bounce = 0;
 
-	if (r.max.x + r.v.x > 1.0 || r.min.x + r.v.x < -1.0) {
-		if (r.drag.x - diff >= 0)
-			r.drag.x -= diff; 
-		else
-			r.drag.x = 0;
-		r.v.x = -r.v.x;
+	r0.min = addpt(&r0.min, &r0.v);
+	r0.max = addpt(&r0.max, &r0.v);
+
+	if (r0.min.x <= -1.0) {
+		r0.min.x = -1.0;
+		r0.max.x = -0.9;
+		bounce = 1;
+		r0.v.x = -r0.drag*r0.v.x;
+	} else if (r0.max.x >= 1.0) {
+		r0.max.x = 1.0;
+		r0.min.x = 0.9;
+		bounce = 1;
+		r0.v.x = -r0.drag*r0.v.x;
 	}
-	if (r.max.y + r.v.y > 1.0 || r.min.y + r.v.y < -1.0) {
-		if (r.drag.y - diff >= 0.0)
-			r.drag.y -= diff;
-		else
-			r.drag.y = 0;
-		r.v.y = -r.v.y;
+
+	if (r0.min.y <= -1.0) {
+		r0.min.y = -1.0;
+		r0.max.y = -0.9;
+		bounce = 1;
+		r0.v.y = -r0.drag*r0.v.y;
+	} else if (r0.max.y >= 1.0) {
+		r0.max.y = 1.0;
+		r0.min.y = 0.9;
+		bounce = 1;
+		r0.v.y = -r0.drag*r0.v.y;
 	}
 	
-
-	r.min.x += r.drag.x * r.v.x;
-	r.max.x += r.drag.x * r.v.x;
-	r.min.y += r.drag.y * r.v.y;
-	r.max.y += r.drag.y * r.v.y;
+	if (bounce) {
+		printrect(&r0);
+		if (r0.drag <= 0) {
+			r0.drag = 1.1+factor;
+			diff = -diff;
+		} else if (r0.drag >= 2.0) {
+			r0.drag = 2.1-factor;
+			diff = -diff;
+		}
+		r0.drag += diff;
+	}
 
 	usleep(10000);
 	glutPostRedisplay();
-	printf("drag.x = %f drag.y = %f\n", r.drag.x, r.drag.y);
 }
+
 int
 main(int argc, char *argv[])
 {
-	r.min.x = r.min.y = 0;
-	r.max.x = r.max.y = 0.10;
-	r.v.x = 0.05;
-	r.v.y = 0.03;
-	r.drag.x = r.drag.y = 1;
+	r0.min.x = r0.min.y = 0;
+	r0.max.x = r0.max.y = 0.10;
+	r0.v.x = 0.5;
+	r0.v.y = 0.3;
+	r0.drag = 1;
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(400, 400);
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow(argv[0]);
-	init();
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glShadeModel(GL_FLAT);
 	glutDisplayFunc(display);
 	glutIdleFunc(update);
 	glutMainLoop();
