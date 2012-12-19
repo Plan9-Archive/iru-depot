@@ -7,10 +7,10 @@ typedef unsigned char uchar;
 typedef struct Stack Stack;
 
 enum SType {
+	Tnone,
 	Tchar,
 	Tint,
 	Tfloat,
-	Tdouble,
 };
 
 struct Stack {
@@ -21,31 +21,27 @@ struct Stack {
 };
 
 void
-dumpelem(char *name, Stack *sp)
+dumpelem(Stack *sp)
 {
-	union {
-		char *cp;
-		int *dp;
-		float *fp;
-		double *lfp;
-	} tp;
+	int i;
 
-	if(name)
-		printf("%s ", name);
-	printf("[%p ", sp);
+	printf("[%p %lu ", sp, sp->size);
 	switch(sp->type){
 	case Tchar:
-		tp.cp = sp->data;
-		printf("%c", *tp.cp);
+		printf("\'%c\'", *(char*)sp->data);
 		break;
 	case Tint:
-		tp.dp = sp->data;
-		printf("%d", *tp.dp);
+		printf("%d", *(int*)sp->data);
 		break;
+	case Tfloat:
+		printf("%f", *(float*)sp->data);
+		break;
+	case Tnone:
 	default:
-		printf("%s", (char*)sp->data);
+		for(i = 0; i < sp->size; i++)
+			printf("%02x ", ((char*)sp->data)[i]);
 	}
-	printf(" %lu -> %p]\n", sp->size, sp->next);
+	printf(" -> %p]\n", sp->next);
 }
 
 void
@@ -54,8 +50,7 @@ dumpstack(Stack *stk)
 	Stack *sp;
 	
 	for(sp = stk; sp; sp = sp->next)
-		dumpelem(0, sp);
-	printf("-- end of dump --\n");
+		dumpelem(sp);
 }
 
 Stack*
@@ -94,23 +89,23 @@ pop(Stack **stk)
 	return sp;
 }
 
-void
-test(void)
+int
+main(void)
 {
 	Stack *stk;
-	int *d;
+	int d;
 
-	d = malloc(sizeof(int));
-	*d = 518;
-	stk = salloc(0, 0, -1);
-	dumpstack(stk);
-	push("iru", 4, -1, &stk);
-	dumpstack(stk);
-	push(d, sizeof(int), Tint, &stk);
-	dumpstack(stk);
+	stk = salloc("iru", 4, Tnone);
+	dumpstack(stk); puts("");
+
+	d = 518;
+	push(&d, sizeof(int), Tint, &stk);
+	dumpstack(stk); puts("");
+
 	free(pop(&stk));
 	dumpstack(stk);
 	return 0;
 }
+
 
 
