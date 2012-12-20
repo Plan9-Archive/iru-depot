@@ -16,7 +16,7 @@
 : elem  here >r  dup ,  here swap dup >r move  r> allot 0 ,  r> ;
 : .elem  dup . [char] : emit space  dup content type  link @ space . ;
 : .list  begin dup cr .elem  link @ dup 0= until drop ;
-: tail!  ( e l -- )  begin dup link @ 0<> while link @ repeat link ! ;
+: tail!  begin link dup @ 0<> while @ repeat ! ;
 
 create hd 0 ,
 s" iruata" elem hd ! 
