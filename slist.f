@@ -15,7 +15,9 @@
 : link  dup @ cell + + ;
 : elem  here >r  dup ,  here swap dup >r move  r> allot 0 ,  r> ;
 : .elem  dup . [char] : emit space  dup content type  link @ space . ;
-: .list  begin dup cr .elem  link @ dup 0= until drop ;
+: .list  begin dup .elem cr link @ dup 0= until drop ;
 : tail!  begin link dup @ 0<> while @ repeat ! ;
 
-: test  s" first element" elem s" second and last" elem over link ! ;
+: test  s" first" elem >r s" second" elem r@ tail!  s" third" elem r@ tail! r> ;
+test .list bye
+
