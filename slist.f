@@ -9,9 +9,15 @@
 \ elem		( a n -- a )	From string, create list element in HERE.
 \ .elem		( a -- )		Print list element.
 \ .list		( a -- )		Print list.
+\ tail!     ( e a -- )      Add element e to tail of list a.
 
 : content  dup cell+  swap @ ;
 : link  dup @ cell + + ;
 : elem  here >r  dup ,  here swap dup >r move  r> allot 0 ,  r> ;
-: .elem  dup . [char] : emit space  dup content type  dup link @ space . ;
-: .list  begin cr dup .elem  link @ dup 0= until drop ;
+: .elem  dup . [char] : emit space  dup content type  link @ space . ;
+: .list  begin dup cr .elem  link @ dup 0= until drop ;
+: tail!  ( e l -- )  begin dup link @ 0<> while link @ repeat link ! ;
+
+create hd 0 ,
+s" iruata" elem hd ! 
+s" martins" elem hd @ link !
