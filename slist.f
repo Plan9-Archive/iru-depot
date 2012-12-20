@@ -18,6 +18,4 @@
 : .list  begin dup cr .elem  link @ dup 0= until drop ;
 : tail!  begin link dup @ 0<> while @ repeat ! ;
 
-create hd 0 ,
-s" iruata" elem hd ! 
-s" martins" elem hd @ link !
+: test  s" first element" elem s" second and last" elem over link ! ;
