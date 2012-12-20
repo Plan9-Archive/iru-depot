@@ -4,12 +4,12 @@
 \ A list element is a string followed by a cell holding the link to the next element, where 0 indicates end of list.
 \
 \ GLOSSARY
-\ content	( a -- a n )	From list element, get the string.
-\ link		( a -- link )	From list element, get the link address.
-\ elem		( a n -- a )	From string, create list element in HERE.
-\ .elem		( a -- )		Print list element.
-\ .list		( a -- )		Print list.
-\ tail!     ( e a -- )      Add element e to tail of list a.
+\ content  ( a -- a n )	From list element, get the string.
+\ link     ( a -- link )	From list element, get the link address.
+\ elem     ( a n -- a )	From string, create list element in HERE.
+\ .elem    ( a -- )		Print list element.
+\ .list    ( a -- )		Print list.
+\ tail!    ( e a -- )      Add element e to tail of list a.
 
 : content  dup cell+  swap @ ;
 : link  dup @ cell + + ;
