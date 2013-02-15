@@ -42,20 +42,20 @@ create new univ1 ,
 : .cols  w 0 do i over u@ . loop drop ;
 : .old  h 0 do cr i . i .cols loop ;
 
-: x+  1+ w mod ;
-: x-  1- dup w and + ;
+: x+  ( xy-xy )  swap 1+ w mod swap ;
+: x-  swap 1- dup w and + swap ;
 : y+  1+ h mod ;
 : y-  1- dup h and + ;
 
 : alive?  u@ ;
-: (-1,-1)  y- swap x- swap alive? ;
+: (-1,-1)  y- x- alive? ;
 : (0,-1)   y- alive? ;
-: (1,-1)   y- swap x+ swap alive? ;
-: (-1,0)   swap x- swap alive? ;
-: (1,0)    swap x+ swap alive? ;
-: (-1,1)   y+ swap x- swap alive? ;
+: (1,-1)   y- x+ alive? ;
+: (-1,0)   x- alive? ;
+: (1,0)    x+ alive? ;
+: (-1,1)   y+ x- alive? ;
 : (0,1)    y+ alive? ;
-: (1,1)    y+ swap x+ swap alive? ;
+: (1,1)    y+ x+ alive? ;
 : neighbours
   2dup (-1,-1) -rot  2dup (0,-1) -rot  2dup (1,-1) -rot
   2dup (-1,0) -rot 2dup (1,0) -rot 2dup (-1,1) -rot 
