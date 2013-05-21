@@ -37,8 +37,8 @@ create new univ1 ,
 
 : clear  univ0 size erase univ1 size erase ;
 
-: >i  w * + ;
-: u@  >i old @ + c@ ;
+: off  w * + ;
+: u@  off old @ + c@ ;
 : .cols  w 0 do i over u@ . loop drop ;
 : .old  h 0 do cr i . i .cols loop ;
 
@@ -61,4 +61,7 @@ create new univ1 ,
   2dup (-1,0) -rot 2dup (1,0) -rot 2dup (-1,1) -rot 
   2dup (0,1) -rot (1,1) + + + + + + + ;
 
-: test0  clear 1 1 0 >i old @ + c!  1 2 1 >i old @ + c! ;
+: step  2dup neighbours 3 =  -rot alive? or if ." alive" else ." dead" then ;
+
+: test0  clear 1 1 0 off old @ + c!  1 2 1 off old @ + c!  1 1 neighbours . ;  \ prints 2
+: test1  1 0 1 off old @ + c!  1 1 step ;  \ prints 'alive'
