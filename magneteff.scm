@@ -1,3 +1,4 @@
+; from https://sites.google.com/site/tddproblems/all-problems-1/magneto-effect
 (use srfi-1)
 (use list-of)
 (load "matrix.scm")
