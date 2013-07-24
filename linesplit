@@ -1,0 +1,31 @@
+#!/usr/bin/env rc
+# Split lines using separator (which is a grep-accepted regex)
+
+if(test $#* -lt 2) {
+	echo usage: linesplit separator file
+	exit usage
+}
+
+. 9.rc
+
+fn m {
+	echo $* | hoc
+}
+
+name=$$#*
+lines=`{grep -n $* | awk -F: '{print $1}'}
+
+# Process until first separator
+sed `{m $lines(1) - 1}^'q' $name > $name-0
+
+for(i in `{seq 1 `{m $#lines - 1}}) {
+	prevsep=`{m $lines($i)}
+	nextsep=`{m $lines(`{m $i + 1})}
+
+	# Empty line
+	if(~ `{m $prevsep + 1} $nextsep)
+		>$name-$i
+	if not
+		sed `{m $prevsep + 1} ^','^ `{m $nextsep - 1} ^'!d' $name > $name-$i
+}
+
