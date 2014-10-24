@@ -1,4 +1,5 @@
 #!/bin/rc
+# find the emulated boot floppy in a cd and add it as a partition in Plan 9.
 
 if(~ $#* 0){
 	echo usage: cdfpart cd
