@@ -1,3 +1,5 @@
+; cat(1)
+
 (define (port-filter filter port)
   (let loop ((line (read-line port)))
     (unless (eof-object? line)
