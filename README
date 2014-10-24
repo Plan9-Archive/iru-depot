@@ -1,0 +1,6 @@
+a.bas: random code from a school notebook (the paper kind) from circa 1998.
+alarmed: note-based 'coroutine' in rc(1).
+await.rc: open $1 in acme(1) and wait for its window to die.
+base.scm: basic scheme functions I find useful.
+cat.scm: cat(1).
+cdfpart: find the emulated boot floppy in a cd and add it as a partition in Plan 9.
