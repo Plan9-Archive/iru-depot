@@ -4,6 +4,7 @@
  * http://www.if.ufrj.br/~sandra/MetComp/2012-2/Aula8.pdf
  *
  */
+
 #include <stdio.h>
 #include <math.h>
 
@@ -32,8 +33,6 @@ main(void)
 		k = k+1;
 	}while(fabs(Tk - T) > eps);
 
-	printf("%d %g\n", k-1, Tk);
+	printf("%d %.20g\n", k-1, Tk);
 	return 0;
 }
-
-		
