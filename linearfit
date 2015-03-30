@@ -1,0 +1,75 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Given an input with the following format
+# x y yerr
+# on standard input, print a fit of y = ax+b
+# to the data.
+
+import sys, string
+from math import sqrt
+
+def cP(X, Yerr):
+	sum = 0
+	for i in range(len(X)):
+		sum = sum + (X[i]*X[i])/(Yerr[i]*Yerr[i])
+	return sum
+
+def cQ(Yerr):
+	sum = 0
+	for i in range(len(Yerr)):
+		sum = sum + 1/(Yerr[i]*Yerr[i])
+	return sum
+
+def cR(X, Yerr):
+	sum = 0
+	for i in range(len(X)):
+		sum = sum + X[i]/(Yerr[i]*Yerr[i])
+	return sum
+
+def cS(X, Y, Yerr):
+	sum = 0
+	for i in range(len(X)):
+		sum = sum + (X[i]*Y[i])/(Yerr[i]*Yerr[i])
+	return sum
+
+def cT(Y, Yerr):
+	sum = 0
+	for i in range(len(Y)):
+		sum = sum + Y[i]/(Yerr[i]*Yerr[i])
+	return sum
+
+
+def stdin2lists():
+	X = []
+	Y = []
+	Yerr = []
+
+	while True:
+		try:
+			r = raw_input('')
+			line = string.split(r)
+			if len(r) == 0 or r[0] == '#':
+				continue
+			f = map(lambda x: float(x), line)
+			X.append(f[0])
+			Y.append(f[1])
+			Yerr.append(f[2])
+		except EOFError:
+			break
+	return [X, Y, Yerr]
+
+data = stdin2lists()
+P = cP(data[0], data[2])
+Q = cQ(data[2])
+R = cR(data[0], data[2])
+S = cS(data[0], data[1], data[2])
+T = cT(data[1], data[2])
+
+a1  = (Q*S - R*T)/(P*Q - R*R)
+a0  = (P*T - R*S)/(P*Q - R*R)
+ea1 = sqrt(Q/(P*Q - R*R))
+ea0 = sqrt(P/(P*Q - R*R))
+
+print "{:e} ± {:e}".format(a1, ea1)
+print "{:e} ± {:e}".format(a0, ea0)
