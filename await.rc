@@ -1,0 +1,22 @@
+#!/usr/local/plan9/bin/rc
+# Open $1 in acme(1) and wait for its window to die.
+
+. 9.rc
+. $PLAN9/lib/acme.rc
+
+fn event {
+	switch($1$2){
+	case Mx MX
+		winwriteevent $*
+		if(~ $9 Del){
+			exit
+		}
+	}
+}
+
+newwindow
+winname $1
+winctl clean
+winctl get
+echo Put | winwrite tag
+wineventloop
