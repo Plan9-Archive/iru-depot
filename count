@@ -1,0 +1,12 @@
+#! /usr/bin/env gforth
+
+warnings off
+
+variable d 
+
+: #      0. 2swap >number 2drop d>s ;
+: first  1 arg dup if # exit then drop 0 ;
+: incr!  2 arg dup if # else drop 1 then d ! ; 
+: incr   d @ + ;
+: run    incr! first begin dup . cr incr 0 until ; 
+run
